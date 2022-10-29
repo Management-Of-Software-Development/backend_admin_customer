@@ -141,7 +141,7 @@ function bootstrap() {
     });
 
     app.use(
-      '/docs/admin',
+      '/docs',
       expressBasicAuth({
         users: {
           [process.env.SWAGGER_UI_USERNAME]: process.env.SWAGGER_UI_PASSWORD,
