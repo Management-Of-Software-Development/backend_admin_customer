@@ -78,7 +78,12 @@ class Mailer {
       subject: 'Activate Account',
       html: htmlToSend,
     };
-    await transporter.sendMail(option);
+    try {
+      await transporter.sendMail(option);
+    } catch (err) {
+      console.log(err.message);
+      console.log(err.stack);
+    }
   }
 
   public static async verifySucceed(receiver: string, name: string) {
