@@ -8,7 +8,7 @@ import { OrderModel } from '../order/order.model';
 import { getOrderEmail } from './htmlTemplateGenerators/htmlEmail.generator';
 
 class Mailer {
-  private static baseUrl = path.resolve('mailTemplates');
+  private static baseUrl = `${path.resolve('mailTemplates')}/customer`;
   private static readonly host = process.env.MAIL_HOST as string;
 
   private static readonly port = process.env.MAIL_PORT as string;
