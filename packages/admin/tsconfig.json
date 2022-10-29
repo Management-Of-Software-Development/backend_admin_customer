@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "ES2018",
+    "lib": ["ES2018"],
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "noImplicitReturns": true,
+    "baseUrl": ".",
+    "outDir": "dist",
+    "skipLibCheck": true,  
+    "removeComments": true
+  },
+  "include": ["src/**/*"]
+}
