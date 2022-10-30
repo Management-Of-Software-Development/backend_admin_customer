@@ -1,5 +1,5 @@
 {
-  "name": "customer",
+  "name": "client",
   "license": "UNLICENSED",
   "version": "1.0.0",
   "description": "",
@@ -11,7 +11,7 @@
     "start:dev": "tsc-watch --onSuccess \"npm run -s watch:dist\"",
     "lint": "eslint src --ext .ts --cache",
     "watch:dist": "npm run lint; nodemon dist/app.js",
-    "dev": "node dist/app.js",
+    "dev": "nodemon dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

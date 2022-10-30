@@ -10,6 +10,7 @@
     "noImplicitReturns": true,
     "baseUrl": ".",
     "outDir": "dist",
+    "skipLibCheck": true,  
     "removeComments": true
   },
   "include": ["src/**/*"]
