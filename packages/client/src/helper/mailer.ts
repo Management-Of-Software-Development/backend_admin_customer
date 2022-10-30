@@ -2,11 +2,14 @@
 import nodemailer from 'nodemailer';
 import handlebars from 'handlebars';
 import { readFileSync } from 'fs';
+import path from 'path';
 import { Types } from 'mongoose';
 import { OrderModel } from '../order/order.model';
 import { getOrderEmail } from './htmlTemplateGenerators/htmlEmail.generator';
 
 class Mailer {
+  private static baseUrl = `${path.resolve('client')}/mailTemplates`;
+
   private static readonly host = process.env.MAIL_HOST as string;
 
   private static readonly port = process.env.MAIL_PORT as string;
@@ -20,7 +23,7 @@ class Mailer {
     name: string,
     active_token: string,
   ) {
-    const filePath = `${process.env.HTML_FILES_ROOT}/resetPasswordTemplate.html`;
+    const filePath = `${this.baseUrl}/resetPasswordTemplate.html`;
     const source = readFileSync(filePath, 'utf-8').toString();
     const template = handlebars.compile(source);
     const replacements = {
@@ -52,7 +55,7 @@ class Mailer {
     name: string,
     active_token: string,
   ) {
-    const filePath = `${process.env.HTML_FILES_ROOT}/registerTemplate.html`;
+    const filePath = `${this.baseUrl}/registerTemplate.html`;
     const source = readFileSync(filePath, 'utf-8').toString();
     const template = handlebars.compile(source);
     const replacements = {
@@ -80,7 +83,7 @@ class Mailer {
   }
 
   public static async verifySucceed(receiver: string, name: string) {
-    const filePath = `${process.env.HTML_FILES_ROOT}/activationConfirmTemplate.html`;
+    const filePath = `${this.baseUrl}/activationConfirmTemplate.html`;
     const source = readFileSync(filePath, 'utf-8').toString();
     const template = handlebars.compile(source);
     const replacements = {
