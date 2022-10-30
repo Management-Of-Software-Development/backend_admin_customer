@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "ES2019",
+    "lib": ["ES2019"],
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "noImplicitReturns": true,
+    "baseUrl": ".",
+    "outDir": "dist",
+    "removeComments": true
+  },
+  "include": ["src/**/*"]
+}
