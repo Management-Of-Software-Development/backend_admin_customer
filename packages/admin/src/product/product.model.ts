@@ -4,19 +4,26 @@ import {
   prop,
   DocumentType,
   Ref,
+  modelOptions,
 } from '@typegoose/typegoose';
 import { Types } from 'mongoose';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
 import { Category } from '../category/category.model';
-import { ProductStatus } from './product-status.enum';
+import { ProductStatus } from './enums/product-status.enum';
+import { ProductType } from './enums/product-type.enum';
 
 @plugin(mongooseUniqueValidator)
+@modelOptions({
+  schemaOptions: {
+    discriminatorKey: 'type',
+  },
+})
 export class Product {
   @prop({ required: true })
   name: string;
 
-  @prop({ required: true })
-  price: number;
+  @prop({ required: true, enum: ProductType, type: String })
+  type: ProductType;
 
   @prop({ type: Types.ObjectId, ref: () => Category })
   category: Ref<Category>;

@@ -4,7 +4,8 @@ import ms from 'ms';
 import { BadRequestError } from 'routing-controllers';
 import { redisClient } from '../config/redis-client';
 import { LoginDto } from './dtos/login.dto';
-import { UserDocument, UserModel } from '../user/user.model';
+import { UserDocument } from '../user/user.model';
+import { AdminModel } from '../user/admin.model';
 
 export class AuthRepository {
   private comparePassword(password: string, hashedPassword: string): boolean {
@@ -42,7 +43,7 @@ export class AuthRepository {
   }
 
   async getUserPassword(email: string): Promise<UserDocument | null> {
-    return UserModel.findOne({ email })
+    return AdminModel.findOne({ email })
       .select({
         _id: 0,
         email: 1,

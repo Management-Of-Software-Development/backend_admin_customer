@@ -3,18 +3,23 @@ import { ScentCategoryModel } from '../scent_category/scent-category.model';
 import { CategoryModel } from '../category/category.model';
 import { CreateProductDto } from './dtos/createProduct.dto';
 import { UpdateProductDto } from './dtos/updateProduct.dto';
-import { ProductStatus } from './product-status.enum';
-import { ProductModel, ProductDocument } from './product.model';
+import { ProductStatus } from '../product/enums/product-status.enum';
+import {
+  CommercialProductModel,
+  CommercialProductDocument,
+} from './commercial_product.model';
+import { ConvertCommercialToGiftProductDto } from './dtos/convertCommercialToGiftProduct.dto';
+import { AppreciationProductModel } from '../appreciation_product/appreciation_product.model';
 
 export class ProductRepository {
-  async getListProducts(
+  async getListCommercialProducts(
     page: number,
     limit: number,
     status: string,
     category_slug: string,
     scent_slug: string,
   ) {
-    let aggregation = ProductModel.aggregate().match({});
+    let aggregation = CommercialProductModel.aggregate().match({});
     if (status) {
       aggregation = aggregation.match({
         status: { $in: status.split(',').map((x) => +x) },
@@ -33,7 +38,9 @@ export class ProductRepository {
 
     if (scent_slug) {
       let scentArray = scent_slug.split(',');
-      const categoryArray = (await CategoryModel.find({}).lean()).map((x) => x.slug);
+      const categoryArray = (await CategoryModel.find({}).lean()).map(
+        (x) => x.slug,
+      );
       scentArray = scentArray.filter((val) => !categoryArray.includes(val));
       if (scentArray && scentArray.length >= 1) {
         const scentObjectIdArray = (
@@ -97,9 +104,11 @@ export class ProductRepository {
     return results;
   }
 
-  async getProductDetailByID(product_id: string): Promise<ProductDocument> {
-    const product_info = await ProductModel.findOne({
-      _id: product_id,
+  async getProductDetailByID(
+    commercial_product_id: string,
+  ): Promise<CommercialProductDocument> {
+    const product_info = await CommercialProductModel.findOne({
+      _id: commercial_product_id,
     })
       .populate('category')
       .exec();
@@ -110,21 +119,45 @@ export class ProductRepository {
   }
 
   async createProduct(createProductDto: CreateProductDto) {
-    const newProduct = new ProductModel({
+    const newProduct = new CommercialProductModel({
       ...createProductDto,
       status: ProductStatus.IN_STOCK,
     });
     await newProduct.save();
   }
 
-  async updateProduct(product_id: string, updateProductDto: UpdateProductDto) {
-    const updatedProduct = await ProductModel.findOneAndUpdate(
-      { _id: product_id },
+  async updateCommercialProduct(
+    commercial_product_id: string,
+    updateProductDto: UpdateProductDto,
+  ) {
+    const updatedProduct = await CommercialProductModel.findOneAndUpdate(
+      { _id: commercial_product_id },
       { ...updateProductDto },
       {
         new: true,
       },
     );
     return updatedProduct;
+  }
+
+  async convertCommercialToGiftProduct(
+    commercial_product_id: string,
+    convertCommercialToGiftProductDto: ConvertCommercialToGiftProductDto,
+  ) {
+    const commercial_product = await CommercialProductModel.findOneAndUpdate(
+      {
+        _id: commercial_product_id,
+      },
+      { $inc: { stock: -convertCommercialToGiftProductDto.number_to_convert } },
+    ).lean();
+    delete commercial_product.type;
+    delete commercial_product._id;
+    const newProduct = new AppreciationProductModel({
+      ...commercial_product,
+      stock: convertCommercialToGiftProductDto.number_to_convert,
+      point: convertCommercialToGiftProductDto.point,
+      status: ProductStatus.IN_STOCK,
+    });
+    await newProduct.save();
   }
 }

@@ -6,25 +6,28 @@ import {
   BadRequestError,
   NotFoundError,
   QueryParam,
-  Authorized,
   Param,
+  Authorized,
   Post,
   Body,
   Res,
   Put,
 } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
-import { CreateProductDto } from './dtos/createProduct.dto';
-import { UpdateProductDto } from './dtos/updateProduct.dto';
-import { ProductService } from './product.service';
+import { AppreciationProductService } from './appreciation_product.service';
+import { ConvertCommercialToGiftProductDto } from '../commercial_product/dtos/convertCommercialToGiftProduct.dto';
+import { CreateGiftDto } from './dtos/createGift.dto';
+import { UpdateGiftDto } from './dtos/updateGift.dto';
 
-@JsonController('/product')
-export class ProductController {
-  private readonly ProductService = new ProductService();
+@JsonController('/appreciationProduct')
+export class AppreciationProductController {
+  private readonly appreciationProductService = new AppreciationProductService();
 
   @OpenAPI({
-    description: 'get List Products',
+    description: 'get List Appreciation Products',
+    security: [{ BearerAuth: [] }],
   })
+  @Authorized(['admin', 'staff'])
   @Get('/', { transformResponse: false })
   async getListProducts(
     @QueryParam('status')
@@ -39,12 +42,12 @@ export class ProductController {
     limit: number,
   ) {
     try {
-      return this.ProductService.getListProducts(
+      return this.appreciationProductService.getListProducts(
         page,
         limit,
-        status,
         category,
         scent,
+        status,
       );
     } catch (e) {
       if (e instanceof NotFoundError) throw new NotFoundError(e.message);
@@ -53,14 +56,16 @@ export class ProductController {
   }
 
   @OpenAPI({
-    description: 'get Products details',
+    description: 'get details of Appreciation Products',
+    security: [{ BearerAuth: [] }],
   })
+  @Authorized(['admin', 'staff'])
   @Get('/:product_id', { transformResponse: false })
   async getProductByID(@Param('product_id') product_id: string) {
     try {
       if (!isValidObjectId(product_id))
         throw new BadRequestError('Invalid Product_id');
-      return this.ProductService.getProductByID(product_id);
+      return this.appreciationProductService.getProductByID(product_id);
     } catch (e) {
       if (e instanceof NotFoundError) throw new NotFoundError(e.message);
       throw new BadRequestError(e.message);
@@ -74,11 +79,11 @@ export class ProductController {
   })
   @Post('', { transformResponse: false })
   async createProduct(
-    @Body() createProductDto: CreateProductDto,
+    @Body() createGiftDto: CreateGiftDto,
     @Res() res: Response,
   ) {
     try {
-      await this.ProductService.createProduct(createProductDto);
+      await this.appreciationProductService.createProduct(createGiftDto);
       res.status(201);
       return {
         message: 'Created Successfully',
@@ -96,11 +101,14 @@ export class ProductController {
   })
   @Put('/:product_id', { transformResponse: false })
   async updateProduct(
-    @Body() updateProductDto: UpdateProductDto,
-    @Param('product_id') Product_id: string,
+    @Body() updateGiftDto: UpdateGiftDto,
+    @Param('product_id') commercial_product_id: string,
   ) {
     try {
-      return this.ProductService.updateProduct(Product_id, updateProductDto);
+      return this.appreciationProductService.updateCommercialProduct(
+        commercial_product_id,
+        updateGiftDto,
+      );
     } catch (e) {
       if (e instanceof NotFoundError) throw new NotFoundError(e.message);
       throw new BadRequestError(e.message);

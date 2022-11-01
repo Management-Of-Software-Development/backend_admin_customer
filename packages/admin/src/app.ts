@@ -26,12 +26,13 @@ import { redisClient } from './config/redis-client';
 import { AuthController } from './auth/auth.controller';
 import { UserController } from './user/user.controller';
 import { GeoController } from './geo/geo.controller';
-import { ProductController } from './product/product.controller';
 import { OrderController } from './order/order.controller';
 import { UserModel } from './user/user.model';
 import { CategoryController } from './category/category.controller';
 import { CustomerController } from './customer/customer.controller';
 import { DiscountCodeController } from './discount_code/discount_code.controller';
+import { CommercialProductController } from './commercial_product/commercial_product.controller';
+import { AppreciationProductController } from './appreciation_product/appreciation_product.controller';
 
 async function authorizationChecker(action: Action, roles: string[]) {
   const req: Request = action.request;
@@ -106,7 +107,8 @@ function bootstrap() {
       UserController,
       AuthController,
       GeoController,
-      ProductController,
+      CommercialProductController,
+      AppreciationProductController,
       OrderController,
       CategoryController,
       CustomerController,

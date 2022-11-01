@@ -10,9 +10,9 @@ import {
   IsUrl,
 } from 'class-validator';
 import { Types } from 'mongoose';
-import { ProductStatus } from '../product-status.enum';
+import { ProductStatus } from '../../product/enums/product-status.enum';
 
-export class UpdateProductDto {
+export class UpdateGiftDto {
   @Expose()
   @IsNotEmpty()
   @IsString()
@@ -22,7 +22,7 @@ export class UpdateProductDto {
   @IsNotEmpty()
   @IsNumber()
   @IsPositive()
-  price: number;
+  point: number;
 
   @Expose()
   @IsNotEmpty()

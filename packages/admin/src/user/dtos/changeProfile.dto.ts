@@ -21,4 +21,9 @@ export class ChangeProfileDto {
   @IsOptional()
   @IsString()
   address: string;
+
+  @Expose()
+  @IsOptional()
+  @IsString()
+  avatar: string;
 }
